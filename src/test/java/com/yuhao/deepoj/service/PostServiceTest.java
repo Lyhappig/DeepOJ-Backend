@@ -1,0 +1,31 @@
+package com.yuhao.deepoj.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yuhao.deepoj.model.dto.post.PostQueryRequest;
+import com.yuhao.deepoj.model.entity.Post;
+import javax.annotation.Resource;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+/**
+ * 帖子服务测试
+ *
+ * @author <a href="https://github.com/Lyhappig">YuhaoLian</a>
+ * @from <a href="https://lyhappig.github.io/">Blog</a>
+ */
+@SpringBootTest
+class PostServiceTest {
+
+    @Resource
+    private PostService postService;
+
+    @Test
+    void searchFromEs() {
+        PostQueryRequest postQueryRequest = new PostQueryRequest();
+        postQueryRequest.setUserId(1L);
+        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
+        Assertions.assertNotNull(postPage);
+    }
+
+}
