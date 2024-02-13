@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yuhao.deepoj.model.dto.problem.ProblemQueryRequest;
 import com.yuhao.deepoj.model.entity.Problem;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yuhao.deepoj.model.entity.User;
 import com.yuhao.deepoj.model.vo.ProblemVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,17 +36,17 @@ public interface ProblemService extends IService<Problem> {
      * 获取题目封装
      *
      * @param problem
-     * @param request
+     * @param loginUser
      * @return
      */
-    ProblemVO getProblemVO(Problem problem, HttpServletRequest request);
+    ProblemVO getProblemVO(Problem problem, User loginUser);
 
     /**
      * 分页获取题目封装
      *
      * @param problemPage
-     * @param request
+     * @param loginUser
      * @return
      */
-    Page<ProblemVO> getProblemVOPage(Page<Problem> problemPage, HttpServletRequest request);
+    Page<ProblemVO> getProblemVOPage(Page<Problem> problemPage, User loginUser);
 }

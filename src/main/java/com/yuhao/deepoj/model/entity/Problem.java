@@ -39,7 +39,7 @@ public class Problem implements Serializable {
     /**
      * 题目内容（json对象）
      */
-    private String content;
+    private String problemContent;
 
     /**
      * 题目答案
@@ -54,7 +54,7 @@ public class Problem implements Serializable {
     /**
      * 判题用例（json数组）
      */
-    private String judgeCase;
+    private String judgeCases;
 
     /**
      * 题目提交数

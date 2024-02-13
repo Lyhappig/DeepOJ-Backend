@@ -9,10 +9,10 @@
             <result property="title" column="title" jdbcType="VARCHAR"/>
             <result property="difficulty" column="difficulty" jdbcType="INTEGER"/>
             <result property="contestId" column="contestId" jdbcType="BIGINT"/>
-            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="problemContent" column="problemContent" jdbcType="VARCHAR"/>
             <result property="answer" column="answer" jdbcType="VARCHAR"/>
             <result property="judgeConfig" column="judgeConfig" jdbcType="VARCHAR"/>
-            <result property="judgeCase" column="judgeCase" jdbcType="VARCHAR"/>
+            <result property="judgeCases" column="judgeCases" jdbcType="VARCHAR"/>
             <result property="submitNum" column="submitNum" jdbcType="INTEGER"/>
             <result property="acceptedNum" column="acceptedNum" jdbcType="INTEGER"/>
             <result property="thumbNum" column="thumbNum" jdbcType="INTEGER"/>
@@ -25,8 +25,8 @@
 
     <sql id="Base_Column_List">
         id,title,difficulty,
-        contestId,content,answer,
-        judgeConfig,judgeCase,submitNum,
+        contestId,problemContent,answer,
+        judgeConfig,judgeCases,submitNum,
         acceptedNum,thumbNum,favourNum,
         userId,createTime,updateTime,
         isDelete

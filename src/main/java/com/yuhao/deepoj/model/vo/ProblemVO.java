@@ -1,14 +1,16 @@
 package com.yuhao.deepoj.model.vo;
 
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.yuhao.deepoj.model.dto.problem.JudgeCase;
 import com.yuhao.deepoj.model.dto.problem.JudgeConfig;
 import com.yuhao.deepoj.model.dto.problem.ProblemContent;
 import com.yuhao.deepoj.model.entity.Problem;
+import com.yuhao.deepoj.utils.StringCheckJSONUtils;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,12 +52,22 @@ public class ProblemVO implements Serializable {
     /**
      * 题目内容
      */
-    private ProblemContent content;
+    private ProblemContent problemContent;
+
+    /**
+     * 题目答案
+     */
+    private String answer;
 
     /**
      * 判题配置
      */
     private JudgeConfig judgeConfig;
+
+    /**
+     * 判题用例
+     */
+    private List<JudgeCase> judgeCases;
 
     /**
      * 题目提交数
@@ -112,14 +124,20 @@ public class ProblemVO implements Serializable {
         // todo 标签更新到标签对象中
 
         // 转换题目内容对象为字符串
-        ProblemContent problemContentVO = problemVO.getContent();
+        ProblemContent problemContentVO = problemVO.getProblemContent();
         if (problemContentVO != null) {
-            problem.setContent(JSONUtil.toJsonStr(problemContentVO));
+            problem.setProblemContent(JSONUtil.toJsonStr(problemContentVO));
         }
         // 转换判题配置对象为字符串
         JudgeConfig judgeConfigVO = problemVO.getJudgeConfig();
         if (judgeConfigVO != null) {
             problem.setJudgeConfig(JSONUtil.toJsonStr(judgeConfigVO));
+        }
+        // 转换判题用例对象为字符串
+        // todo 获取测试用例的文件对象
+        List<JudgeCase> judgeCasesVO = problemVO.getJudgeCases();
+        if (judgeCasesVO != null) {
+            problem.setJudgeCases(JSONUtil.toJsonStr(judgeCasesVO));
         }
         return problem;
     }
@@ -138,11 +156,20 @@ public class ProblemVO implements Serializable {
         BeanUtils.copyProperties(problem, problemVO);
         // todo 从题目对应的标签表中，取出标签并转换到“题目视图对象”
         // 题目内容字符串转化为包装类的成员变量
-        String problemContentStr = problem.getContent();
-        problemVO.setContent(JSONUtil.toBean(problemContentStr, ProblemContent.class));
+        String problemContentStr = problem.getProblemContent();
+        if (StringCheckJSONUtils.isJSONString(problemContentStr)) {
+            problemVO.setProblemContent(JSONUtil.toBean(problemContentStr, ProblemContent.class));
+        }
         // 判题配置字符串转化为包装类的成员变量
         String judgeConfigStr = problem.getJudgeConfig();
-        problemVO.setJudgeConfig(JSONUtil.toBean(judgeConfigStr, JudgeConfig.class));
+        if (StringCheckJSONUtils.isJSONString(judgeConfigStr)) {
+            problemVO.setJudgeConfig(JSONUtil.toBean(judgeConfigStr, JudgeConfig.class));
+        }
+        // 判题用例字符串转化为包装类的成员变量
+        String judgeCasesStr = problem.getJudgeCases();
+        if (StringCheckJSONUtils.isJsonArrayString(judgeCasesStr)) {
+            problemVO.setJudgeCases(JSONObject.parseArray(judgeCasesStr, JudgeCase.class));
+        }
         return problemVO;
     }
 

@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,29 +53,29 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem>
         }
 
         String title = problem.getTitle();
-        String content = problem.getContent();
+        String problemContent = problem.getProblemContent();
         String judgeConfigStr = problem.getJudgeConfig();
-        String judgeCaseStr = problem.getJudgeCase();
+        String judgeCasesStr = problem.getJudgeCases();
         String answer = problem.getAnswer();
 
         // 创建时，参数不能为空
         if (add) {
-            ThrowUtils.throwIf(StringUtils.isAnyBlank(title, content, answer, judgeConfigStr), ErrorCode.PARAMS_ERROR);
+            ThrowUtils.throwIf(StringUtils.isAnyBlank(title, problemContent, answer, judgeConfigStr), ErrorCode.PARAMS_ERROR);
         }
         // 有参数则校验
         if (StringUtils.isNotBlank(title) && title.length() > 80) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "标题过长");
         }
-        if (StringUtils.isNotBlank(content) && content.length() > CommonConstant.KB * 20) {
+        if (StringUtils.isNotBlank(problemContent) && problemContent.length() > CommonConstant.KB * 20) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "题目内容过长");
         }
         // todo 检验单个用例长度不超过某个阈值（50 MB）
-        if (StringUtils.isNotBlank(judgeCaseStr) && judgeCaseStr.length() > CommonConstant.MB * 50) {
+        if (StringUtils.isNotBlank(judgeCasesStr) && judgeCasesStr.length() > CommonConstant.MB * 50) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "判题用例过长");
         }
         JudgeConfig judgeConfig = JSONUtil.toBean(problem.getJudgeConfig(), JudgeConfig.class);
         // todo 检测答案的长度不超过judgeConfig的提供值
-        if (StringUtils.isNotBlank(answer) && answer.length() > judgeConfig.getCodeLengthLimit()) {
+        if (StringUtils.isNotBlank(answer) && answer.length() > judgeConfig.getCodeLengthLimit() * CommonConstant.KB) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "答案代码过长");
         }
     }
@@ -116,21 +115,21 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem>
     }
 
     @Override
-    public ProblemVO getProblemVO(Problem problem, HttpServletRequest request) {
+    public ProblemVO getProblemVO(Problem problem, User loginUser) {
         ProblemVO problemVO = ProblemVO.objToVo(problem);
-        // 关联出题人信息
         Long userId = problem.getUserId();
-        User user = null;
-        if (userId != null && userId > 0) {
-            user = userService.getById(userId);
+        if (!userId.equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            problemVO.setAnswer(null);
+            problemVO.setJudgeCases(null);
         }
-        UserVO userVO = userService.getUserVO(user);
+        // 关联出题人信息
+        UserVO userVO = userService.getUserVO(userService.getById(userId));
         problemVO.setUserVO(userVO);
         return problemVO;
     }
 
     @Override
-    public Page<ProblemVO> getProblemVOPage(Page<Problem> problemPage, HttpServletRequest request) {
+    public Page<ProblemVO> getProblemVOPage(Page<Problem> problemPage, User loginUser) {
         List<Problem> problemList = problemPage.getRecords();
         Page<ProblemVO> problemVOPage = new Page<>(problemPage.getCurrent(), problemPage.getSize(), problemPage.getTotal());
         if (CollUtil.isEmpty(problemList)) {
@@ -144,10 +143,12 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem>
         List<ProblemVO> problemVOList = problemList.stream().map(problem -> {
             ProblemVO problemVO = ProblemVO.objToVo(problem);
             Long userId = problem.getUserId();
-            User user = null;
-            if (userIdUserListMap.containsKey(userId)) {
-                user = userIdUserListMap.get(userId).get(0);
+            if (!userId.equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+                problemVO.setAnswer(null);
+                problemVO.setJudgeCases(null);
             }
+            // 关联出题人信息
+            User user = userIdUserListMap.get(userId).get(0);
             problemVO.setUserVO(userService.getUserVO(user));
             return problemVO;
         }).collect(Collectors.toList());

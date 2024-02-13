@@ -38,7 +38,7 @@ public class ProblemEditRequest implements Serializable {
     /**
      * 题目内容
      */
-    private ProblemContent content;
+    private ProblemContent problemContent;
 
     /**
      * 题目答案
@@ -54,7 +54,7 @@ public class ProblemEditRequest implements Serializable {
      * 判题用例
      * todo 上传过来的判题用例应该是文件压缩包
      */
-    private List<JudgeCase> judgeCase;
+    private List<JudgeCase> judgeCases;
 
     private static final long serialVersionUID = 1L;
 }

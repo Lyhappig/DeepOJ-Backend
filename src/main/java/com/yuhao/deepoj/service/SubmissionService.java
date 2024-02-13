@@ -37,18 +37,18 @@ public interface SubmissionService extends IService<Submission> {
     /**
      * 获取提交记录封装
      *
-     * @param problem
+     * @param submission
      * @param loginUser
      * @return
      */
-    SubmissionVO getSubmissionVO(Submission problem, User loginUser);
+    SubmissionVO getSubmissionVO(Submission submission, User loginUser);
 
     /**
      * 分页获取提交记录封装
      *
-     * @param problemPage
+     * @param submissionPage
      * @param loginUser
      * @return
      */
-    Page<SubmissionVO> getSubmissionVOPage(Page<Submission> problemPage, User loginUser);
+    Page<SubmissionVO> getSubmissionVOPage(Page<Submission> submissionPage, User loginUser);
 }

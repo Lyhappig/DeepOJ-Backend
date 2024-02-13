@@ -38,7 +38,7 @@ public class ProblemUpdateRequest implements Serializable {
     /**
      * 题目内容
      */
-    private ProblemContent content;
+    private ProblemContent problemContent;
 
     /**
      * 题目答案
@@ -53,7 +53,7 @@ public class ProblemUpdateRequest implements Serializable {
     /**
      * 判题用例
      */
-    private List<JudgeCase> judgeCase;
+    private List<JudgeCase> judgeCases;
 
     private static final long serialVersionUID = 1L;
 }

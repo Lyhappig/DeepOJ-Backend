@@ -60,18 +60,18 @@ public class ProblemController {
         Problem problem = new Problem();
         BeanUtils.copyProperties(problemAddRequest, problem);
         // todo 为题目增加标签
-        ProblemContent problemContent = problemAddRequest.getContent();
+        ProblemContent problemContent = problemAddRequest.getProblemContent();
         if (problemContent != null) {
-            problem.setContent(GSON.toJson(problemContent));
+            problem.setProblemContent(GSON.toJson(problemContent));
         }
         JudgeConfig judgeConfig = problemAddRequest.getJudgeConfig();
         if (judgeConfig != null) {
             problem.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         // todo 将得到的文件上传到服务器，然后得到文件路径
-        List<JudgeCase> judgeCases = problemAddRequest.getJudgeCase();
+        List<JudgeCase> judgeCases = problemAddRequest.getJudgeCases();
         if (judgeCases != null) {
-            problem.setJudgeCase(GSON.toJson(judgeCases));
+            problem.setJudgeCases(GSON.toJson(judgeCases));
         }
 
         problemService.validProblem(problem, true);
@@ -123,18 +123,18 @@ public class ProblemController {
         Problem problem = new Problem();
         BeanUtils.copyProperties(problemUpdateRequest, problem);
         // todo 更新题目的 Tag
-        ProblemContent problemContent = problemUpdateRequest.getContent();
+        ProblemContent problemContent = problemUpdateRequest.getProblemContent();
         if (problemContent != null) {
-            problem.setContent(GSON.toJson(problemContent));
+            problem.setProblemContent(GSON.toJson(problemContent));
         }
         JudgeConfig judgeConfig = problemUpdateRequest.getJudgeConfig();
         if (judgeConfig != null) {
             problem.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         // todo 将得到的文件上传到服务器，然后得到文件路径
-        List<JudgeCase> judgeCases = problemUpdateRequest.getJudgeCase();
+        List<JudgeCase> judgeCases = problemUpdateRequest.getJudgeCases();
         if (judgeCases != null) {
-            problem.setJudgeCase(GSON.toJson(judgeCases));
+            problem.setJudgeCases(GSON.toJson(judgeCases));
         }
         // 参数校验
         problemService.validProblem(problem, false);
@@ -147,7 +147,7 @@ public class ProblemController {
     }
 
     /**
-     * 根据 id 获取
+     * 根据 id 获取（脱敏）
      *
      * @param id
      * @return
@@ -161,7 +161,8 @@ public class ProblemController {
         if (problem == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtils.success(problemService.getProblemVO(problem, request));
+        final User loginUser = userService.getLoginUser(request);
+        return ResultUtils.success(problemService.getProblemVO(problem, loginUser));
     }
 
     /**
@@ -196,7 +197,8 @@ public class ProblemController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<Problem> problemPage = problemService.page(new Page<>(current, size),
                 problemService.getQueryWrapper(problemQueryRequest));
-        return ResultUtils.success(problemService.getProblemVOPage(problemPage, request));
+        final User loginUser = userService.getLoginUser(request);
+        return ResultUtils.success(problemService.getProblemVOPage(problemPage, loginUser));
     }
 
     /**
@@ -220,7 +222,7 @@ public class ProblemController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<Problem> problemPage = problemService.page(new Page<>(current, size),
                 problemService.getQueryWrapper(problemQueryRequest));
-        return ResultUtils.success(problemService.getProblemVOPage(problemPage, request));
+        return ResultUtils.success(problemService.getProblemVOPage(problemPage, loginUser));
     }
 
     // endregion
@@ -240,18 +242,18 @@ public class ProblemController {
         Problem problem = new Problem();
         BeanUtils.copyProperties(problemEditRequest, problem);
         // todo 更新题目标签
-        ProblemContent problemContent = problemEditRequest.getContent();
+        ProblemContent problemContent = problemEditRequest.getProblemContent();
         if (problemContent != null) {
-            problem.setContent(GSON.toJson(problemContent));
+            problem.setProblemContent(GSON.toJson(problemContent));
         }
         JudgeConfig judgeConfig = problemEditRequest.getJudgeConfig();
         if (judgeConfig != null) {
             problem.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         // todo 将得到的文件上传到服务器，然后得到文件路径
-        List<JudgeCase> judgeCases = problemEditRequest.getJudgeCase();
+        List<JudgeCase> judgeCases = problemEditRequest.getJudgeCases();
         if (judgeCases != null) {
-            problem.setJudgeCase(GSON.toJson(judgeCases));
+            problem.setJudgeCases(GSON.toJson(judgeCases));
         }
         // 参数校验
         problemService.validProblem(problem, false);

@@ -52,7 +52,7 @@ public class SubmissionServiceImpl extends ServiceImpl<SubmissionMapper, Submiss
     @Override
     public long doSubmit(SubmissionAddRequest submissionAddRequest, User loginUser) {
         String language = submissionAddRequest.getLanguage();
-        if(SubmissionLanguageEnum.getEnumByValue(language) == null) {
+        if (SubmissionLanguageEnum.getEnumByValue(language) == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "编程语言不存在");
         }
         long problemId = submissionAddRequest.getProblemId();
@@ -112,8 +112,8 @@ public class SubmissionServiceImpl extends ServiceImpl<SubmissionMapper, Submiss
     public SubmissionVO getSubmissionVO(Submission submission, User loginUser) {
         SubmissionVO submissionVO = SubmissionVO.objToVo(submission);
         // 脱敏：提交 userId 和登录 userId 不同，不可查看
-        long userId = loginUser.getId();
-        if (userId != submission.getUserId() && !userService.isAdmin(loginUser)) {
+        Long userId = loginUser.getId();
+        if (!userId.equals(submission.getUserId()) && !userService.isAdmin(loginUser)) {
             submissionVO.setCode(null);
         }
         return submissionVO;
@@ -127,7 +127,7 @@ public class SubmissionServiceImpl extends ServiceImpl<SubmissionMapper, Submiss
             return submissionVOPage;
         }
         List<SubmissionVO> submissionVOList = submissionList.stream()
-                .map(Submission -> getSubmissionVO(Submission, loginUser)).collect(Collectors.toList());
+                .map(submission -> getSubmissionVO(submission, loginUser)).collect(Collectors.toList());
         submissionVOPage.setRecords(submissionVOList);
         return submissionVOPage;
     }
