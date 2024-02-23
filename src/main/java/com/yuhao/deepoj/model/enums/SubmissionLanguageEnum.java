@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public enum SubmissionLanguageEnum {
     C("c", "c"),
-    CPP("c++", "c++"),
+    CPP("cpp", "cpp"),
     JAVA("java", "java"),
     GOLANG("golang", "golang");
 
