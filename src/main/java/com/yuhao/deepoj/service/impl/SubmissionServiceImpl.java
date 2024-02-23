@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yuhao.deepoj.common.ErrorCode;
 import com.yuhao.deepoj.constant.CommonConstant;
 import com.yuhao.deepoj.exception.BusinessException;
+import com.yuhao.deepoj.judge.JudgeService;
 import com.yuhao.deepoj.mapper.SubmissionMapper;
 import com.yuhao.deepoj.model.dto.submission.SubmissionAddRequest;
 import com.yuhao.deepoj.model.dto.submission.SubmissionQueryRequest;
@@ -22,10 +23,12 @@ import com.yuhao.deepoj.service.UserService;
 import com.yuhao.deepoj.utils.SqlUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +44,10 @@ public class SubmissionServiceImpl extends ServiceImpl<SubmissionMapper, Submiss
 
     @Resource
     private UserService userService;
+
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
 
     /**
      * 提交题目
@@ -75,7 +82,12 @@ public class SubmissionServiceImpl extends ServiceImpl<SubmissionMapper, Submiss
         if (!save) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "提交插入数据库失败");
         }
-        return submission.getId();
+        Long submissionId = submission.getId();
+        // 执行判题服务
+        CompletableFuture.runAsync(() -> {
+            judgeService.doJudge(submissionId);
+        });
+        return submissionId;
     }
 
     /**

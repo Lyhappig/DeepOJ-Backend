@@ -2,12 +2,15 @@ package com.yuhao.deepoj.model.dto.submission;
 
 import lombok.Data;
 
+/**
+ * 评测信息（结果）
+ */
 @Data
 public class JudgeInfo {
     /**
      * 评测结果枚举值
      */
-    private Integer result;
+    private String result;
 
     /**
      * 评测得分
@@ -22,5 +25,5 @@ public class JudgeInfo {
     /**
      * 运行时间
      */
-    private Integer runTime;
+    private Long runTime;
 }

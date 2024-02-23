@@ -27,9 +27,14 @@ public class ProblemQueryRequest extends PageRequest implements Serializable {
     private String title;
 
     /**
-     * 难度
+     * 最小难度
      */
-    private Integer difficulty;
+    private Integer minDifficulty;
+
+    /**
+     * 最大难度
+     */
+    private Integer maxDifficulty;
 
     /**
      * 标签列表

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yuhao.deepoj.common.ErrorCode;
 import com.yuhao.deepoj.constant.CommonConstant;
+import com.yuhao.deepoj.constant.ProblemConstant;
 import com.yuhao.deepoj.exception.BusinessException;
 import com.yuhao.deepoj.exception.ThrowUtils;
 import com.yuhao.deepoj.mapper.ProblemMapper;
@@ -95,7 +96,14 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem>
 
         Long id = problemQueryRequest.getId();
         String title = problemQueryRequest.getTitle();
-        Integer difficulty = problemQueryRequest.getDifficulty();
+        Integer minDifficulty = problemQueryRequest.getMinDifficulty();
+        Integer maxDifficulty = problemQueryRequest.getMaxDifficulty();
+        if (ObjectUtils.isEmpty(minDifficulty) || minDifficulty < ProblemConstant.minDifficulty) {
+            minDifficulty = ProblemConstant.minDifficulty;
+        }
+        if (ObjectUtils.isEmpty(maxDifficulty) || maxDifficulty > ProblemConstant.maxDifficulty) {
+            maxDifficulty = ProblemConstant.maxDifficulty;
+        }
         Long contestId = problemQueryRequest.getContestId();
         Long userId = problemQueryRequest.getUserId();
         String sortField = problemQueryRequest.getSortField();
@@ -107,7 +115,7 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem>
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(contestId), "contestId", contestId);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(difficulty), "difficulty", difficulty);
+        queryWrapper.between("difficulty", minDifficulty, maxDifficulty);
         queryWrapper.eq("isDelete", false);
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);

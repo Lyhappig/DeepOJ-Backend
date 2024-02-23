@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * 提交状态枚举
+ * todo 是否可以将 value 修改为 Integer
  */
 public enum SubmissionStatusEnum {
     SUBMITTED_FAILED("Submit Failed", "Submit Failed"),
