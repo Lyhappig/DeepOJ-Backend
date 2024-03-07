@@ -1,8 +1,6 @@
-package com.yuhao.deepoj.judge.codesandbox.proxy;
+package com.yuhao.deepoj.judge.codesandbox.service.proxy;
 
-import com.yuhao.deepoj.judge.codesandbox.CodeSandbox;
-import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeRequest;
-import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeResponse;
+import com.yuhao.deepoj.judge.codesandbox.service.CodeSandbox;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;

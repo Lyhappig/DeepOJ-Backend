@@ -4,7 +4,7 @@ import com.yuhao.deepoj.judge.strategy.DefaultJudgeStrategy;
 import com.yuhao.deepoj.judge.strategy.JavaJudgeStrategy;
 import com.yuhao.deepoj.judge.strategy.JudgeContext;
 import com.yuhao.deepoj.judge.strategy.JudgeStrategy;
-import com.yuhao.deepoj.model.dto.submission.JudgeInfo;
+import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
 import com.yuhao.deepoj.model.entity.Submission;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,5 @@
 package com.yuhao.deepoj.judge.codesandbox.model;
 
-import com.yuhao.deepoj.model.dto.submission.JudgeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

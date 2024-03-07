@@ -1,4 +1,4 @@
-package com.yuhao.deepoj.judge.codesandbox;
+package com.yuhao.deepoj.judge.codesandbox.service;
 
 import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeRequest;
 import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeResponse;

@@ -1,7 +1,7 @@
 package com.yuhao.deepoj.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.yuhao.deepoj.model.dto.submission.JudgeInfo;
+import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
 import com.yuhao.deepoj.model.entity.Submission;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

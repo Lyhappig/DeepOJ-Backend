@@ -1,4 +1,4 @@
-package com.yuhao.deepoj.model.enums;
+package com.yuhao.deepoj.judge.codesandbox.enums;
 
 import org.apache.commons.lang3.ObjectUtils;
 

@@ -1,9 +1,11 @@
 package com.yuhao.deepoj.judge.codesandbox;
 
-import com.yuhao.deepoj.judge.codesandbox.impl.RemoteCodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.impl.RemoteCodeSandbox;
 import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeRequest;
 import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeResponse;
-import com.yuhao.deepoj.judge.codesandbox.proxy.CodeSandboxDynamicProxy;
+import com.yuhao.deepoj.judge.codesandbox.service.proxy.CodeSandboxDynamicProxy;
+import com.yuhao.deepoj.judge.codesandbox.service.CodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.factory.CodeSandboxFactory;
 import com.yuhao.deepoj.model.enums.SubmissionLanguageEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

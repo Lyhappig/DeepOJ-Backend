@@ -28,7 +28,6 @@ public interface CommonConstant {
      */
     Long MB = KB * 1024L;
 
-
     /**
      * 1 GB = 1024 MB = 2^{20} KB = 2^{30} KB
      */

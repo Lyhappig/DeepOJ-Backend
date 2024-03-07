@@ -1,7 +1,7 @@
 package com.yuhao.deepoj.judge.strategy;
 
 import com.yuhao.deepoj.model.dto.problem.JudgeCase;
-import com.yuhao.deepoj.model.dto.submission.JudgeInfo;
+import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
 import com.yuhao.deepoj.model.entity.Problem;
 import com.yuhao.deepoj.model.entity.Submission;
 import lombok.AllArgsConstructor;

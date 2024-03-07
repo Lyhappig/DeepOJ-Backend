@@ -1,8 +1,9 @@
-package com.yuhao.deepoj.judge.codesandbox;
+package com.yuhao.deepoj.judge.codesandbox.service.factory;
 
-import com.yuhao.deepoj.judge.codesandbox.impl.ExampleCodeSandbox;
-import com.yuhao.deepoj.judge.codesandbox.impl.RemoteCodeSandbox;
-import com.yuhao.deepoj.judge.codesandbox.impl.ThirdPartyCodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.CodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.impl.ExampleCodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.impl.RemoteCodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.impl.ThirdPartyCodeSandbox;
 
 /**
  * 代码沙箱工厂（根据字符串参数创建指定的代码沙箱实例）

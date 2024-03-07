@@ -1,10 +1,10 @@
-package com.yuhao.deepoj.judge.codesandbox.impl;
+package com.yuhao.deepoj.judge.codesandbox.service.impl;
 
-import com.yuhao.deepoj.judge.codesandbox.CodeSandbox;
+import com.yuhao.deepoj.judge.codesandbox.service.CodeSandbox;
 import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeRequest;
 import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeResponse;
-import com.yuhao.deepoj.model.dto.submission.JudgeInfo;
-import com.yuhao.deepoj.model.enums.JudgeResultEnum;
+import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
+import com.yuhao.deepoj.judge.codesandbox.enums.JudgeResultEnum;
 import com.yuhao.deepoj.model.enums.SubmissionStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 
