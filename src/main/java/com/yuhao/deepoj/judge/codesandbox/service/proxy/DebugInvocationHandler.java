@@ -9,16 +9,16 @@ import java.lang.reflect.InvocationHandler;
 
 @Slf4j
 public class DebugInvocationHandler implements InvocationHandler {
-    private final CodeSandbox codeSandboxImpl;
+    private final Object delegate;
 
     public DebugInvocationHandler(CodeSandbox codeSandboxImpl) {
-        this.codeSandboxImpl = codeSandboxImpl;
+        this.delegate = codeSandboxImpl;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
         log.info("代码沙箱请求信息：" + args[0].toString());
-        Object result = method.invoke(codeSandboxImpl, args);
+        Object result = method.invoke(delegate, args);
         log.info("代码沙箱响应信息：" + result.toString());
         return result;
     }

@@ -1,13 +1,17 @@
 package com.yuhao.deepoj.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yuhao.deepoj.common.ErrorCode;
 import com.yuhao.deepoj.constant.CommonConstant;
+import com.yuhao.deepoj.constant.MqConstant;
 import com.yuhao.deepoj.exception.BusinessException;
 import com.yuhao.deepoj.judge.JudgeService;
+import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
 import com.yuhao.deepoj.mapper.SubmissionMapper;
 import com.yuhao.deepoj.model.dto.submission.SubmissionAddRequest;
 import com.yuhao.deepoj.model.dto.submission.SubmissionQueryRequest;
@@ -17,6 +21,7 @@ import com.yuhao.deepoj.model.entity.User;
 import com.yuhao.deepoj.model.enums.SubmissionLanguageEnum;
 import com.yuhao.deepoj.model.enums.SubmissionStatusEnum;
 import com.yuhao.deepoj.model.vo.SubmissionVO;
+import com.yuhao.deepoj.mq.MessageProducer;
 import com.yuhao.deepoj.service.ProblemService;
 import com.yuhao.deepoj.service.SubmissionService;
 import com.yuhao.deepoj.service.UserService;
@@ -74,19 +79,16 @@ public class SubmissionServiceImpl extends ServiceImpl<SubmissionMapper, Submiss
         submission.setProblemId(problemId);
         submission.setCode(submissionAddRequest.getCode());
         submission.setLanguage(submissionAddRequest.getLanguage());
-        // 设置提交后的初始状态
+        // 提交后的初始状态：处在判题队列
         submission.setStatus(SubmissionStatusEnum.PENDING.getValue());
-        submission.setJudgeInfo("{}");
         // todo 禁止连续提交
         boolean save = this.save(submission);
         if (!save) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "提交插入数据库失败");
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目提交插入数据库失败");
         }
         Long submissionId = submission.getId();
         // 执行判题服务
-        CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(submissionId);
-        });
+        CompletableFuture.runAsync(() -> judgeService.doJudge(submissionId));
         return submissionId;
     }
 

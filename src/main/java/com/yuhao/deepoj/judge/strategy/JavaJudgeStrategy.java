@@ -1,12 +1,17 @@
 package com.yuhao.deepoj.judge.strategy;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.yuhao.deepoj.common.ErrorCode;
 import com.yuhao.deepoj.constant.CommonConstant;
+import com.yuhao.deepoj.exception.BusinessException;
+import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeResponse;
 import com.yuhao.deepoj.model.dto.problem.JudgeCase;
 import com.yuhao.deepoj.model.dto.problem.JudgeConfig;
 import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
 import com.yuhao.deepoj.model.entity.Problem;
 import com.yuhao.deepoj.judge.codesandbox.enums.JudgeResultEnum;
+import com.yuhao.deepoj.utils.ComputeUtils;
 
 import java.util.List;
 
@@ -23,53 +28,79 @@ public class JavaJudgeStrategy implements JudgeStrategy {
      */
     @Override
     public JudgeInfo doCompare(JudgeContext judgeContext) {
-        JudgeInfo judgeInfo = judgeContext.getJudgeInfo();
-        Long memory = judgeInfo.getRunMemory();
-        Long time = judgeInfo.getRunTime();
-        List<String> inputList = judgeContext.getInputList();
-        List<String> outputList = judgeContext.getOutputList();
-        Problem problem = judgeContext.getProblem();
-        List<JudgeCase> judgeCaseList = judgeContext.getJudgeCaseList();
-        JudgeResultEnum judgeInfoMessageEnum = JudgeResultEnum.Accepted;
-        JudgeInfo judgeInfoResponse = new JudgeInfo();
-        judgeInfoResponse.setRunMemory(memory);
-        judgeInfoResponse.setRunTime(time);
-        // 先判断沙箱执行的结果输出数量是否和预期输出数量相等
-        // todo 从文件获取预期输出
-        if (outputList.size() != inputList.size()) {
-            judgeInfoMessageEnum = JudgeResultEnum.WRONG_ANSWER;
-            judgeInfoResponse.setResult(judgeInfoMessageEnum.getValue());
-            return judgeInfoResponse;
-        }
-        // 依次判断每一项输出和预期输出是否相等
-        // todo 从文件获取预期输出
-        for (int i = 0; i < judgeCaseList.size(); i++) {
-            JudgeCase judgeCase = judgeCaseList.get(i);
-            if (!judgeCase.getOutputPath().equals(outputList.get(i))) {
-                judgeInfoMessageEnum = JudgeResultEnum.WRONG_ANSWER;
-                judgeInfoResponse.setResult(judgeInfoMessageEnum.getValue());
-                return judgeInfoResponse;
-            }
-        }
-        // 判断题目是否超出时间、空间限制
-        String judgeConfigStr = problem.getJudgeConfig();
-        JudgeConfig judgeConfig = JSONUtil.toBean(judgeConfigStr, JudgeConfig.class);
-        // Java、Python等其他语言，时间、空间限制都是C/C++时限的两倍
-        Long needMemoryLimit = 2L * CommonConstant.MB * judgeConfig.getMemoryLimit();
-        Long needTimeLimit = 2L * judgeConfig.getTimeLimit();
-        if (memory > needMemoryLimit) {
-            judgeInfoMessageEnum = JudgeResultEnum.MEMORY_LIMIT_EXCEEDED;
-            judgeInfoResponse.setResult(judgeInfoMessageEnum.getValue());
-            return judgeInfoResponse;
+        ExecuteCodeResponse executeCodeResponse = judgeContext.getExecuteCodeResponse();
+        String status = executeCodeResponse.getStatus();
+        if (checkNoOutput(status)) {
+            return new JudgeInfo(status, 0, 0, 0);
         }
 
-        if (time > needTimeLimit) {
-            judgeInfoMessageEnum = JudgeResultEnum.TIME_LIMIT_EXCEEDED;
-            judgeInfoResponse.setResult(judgeInfoMessageEnum.getValue());
-            return judgeInfoResponse;
+        List<String> outputList = executeCodeResponse.getOutputList();
+        List<String> messageList = executeCodeResponse.getMessageList();
+        List<Long> runTimeList = executeCodeResponse.getRunTimeList();
+        List<Long> runMemoryList = executeCodeResponse.getRunMemoryList();
+        // todo 从文件获取预期输出
+        List<JudgeCase> judgeCaseList = judgeContext.getJudgeCaseList();
+        int n = judgeCaseList.size();
+        if (isThrowError(n, executeCodeResponse)) {
+            throw new BusinessException(ErrorCode.EXTERNAL_ERROR);
         }
-        judgeInfoResponse.setResult(judgeInfoMessageEnum.getValue());
-        return judgeInfoResponse;
+
+        JudgeConfig judgeConfig = judgeContext.getJudgeConfig();
+        JudgeInfo judgeInfo = new JudgeInfo();
+        String result = null;
+        long timeLimit = judgeConfig.getTimeLimit() * 2;
+        long memoryLimit = CommonConstant.MB * judgeConfig.getMemoryLimit() * 2;
+        long stackLimit = CommonConstant.MB * judgeConfig.getStackLimit();
+        int rightCount = 0;
+        long time = 0;
+        long memory = 0;
+        boolean hasError = false;
+
+        for (int i = 0; i < n; i++) {
+            if (StrUtil.isNotEmpty(messageList.get(i))) {
+                hasError = true;
+                if (runTimeList.get(i) >= timeLimit) {
+                    result = JudgeResultEnum.TIME_LIMIT_EXCEEDED.getValue();
+                } else if (runMemoryList.get(i) >= memoryLimit) {
+                    result = JudgeResultEnum.MEMORY_LIMIT_EXCEEDED.getValue();
+                } else {
+                    result = JudgeResultEnum.RUNTIME_ERROR.getValue();
+                }
+            } else if (outputList.get(i).equals(judgeCaseList.get(i).getOutputPath())) {
+                rightCount++;
+            }
+            time = Math.max(time, runTimeList.get(i));
+            memory = Math.max(memory, runMemoryList.get(i));
+        }
+
+        judgeInfo.setScore(ComputeUtils.getRateScore(rightCount, n));
+        judgeInfo.setRunTime(time);
+        judgeInfo.setRunMemory(memory);
+        if (hasError) {
+            judgeInfo.setResult(result);
+        } else {
+            judgeInfo.setResult(rightCount == n ? JudgeResultEnum.Accepted.getValue() : JudgeResultEnum.WRONG_ANSWER.getValue());
+        }
+        return judgeInfo;
+    }
+
+    public boolean checkNoOutput(String status) {
+        if (StrUtil.isBlank(status)) return false;
+        return status.equals(JudgeResultEnum.COMPILE_ERROR.getValue()) ||
+                status.equals(JudgeResultEnum.CANCELLED.getValue()) ||
+                status.equals(JudgeResultEnum.SYSTEM_ERROR.getValue());
+    }
+
+    public boolean isThrowError(int n, ExecuteCodeResponse response) {
+        List<String> outputList = response.getOutputList();
+        List<String> messageList = response.getMessageList();
+        List<Long> runTimeList = response.getRunTimeList();
+        List<Long> runMemoryList = response.getRunMemoryList();
+        if (outputList.size() != n || messageList.size() != n ||
+                runTimeList.size() != n || runMemoryList.size() != n) {
+            return true;
+        }
+        return false;
     }
 }
 

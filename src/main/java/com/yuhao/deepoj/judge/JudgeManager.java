@@ -20,9 +20,8 @@ public class JudgeManager {
      * @param judgeContext
      * @return
      */
-    JudgeInfo doJudge(JudgeContext judgeContext) {
-        Submission submission = judgeContext.getSubmission();
-        String language = submission.getLanguage();
+    public JudgeInfo doJudge(JudgeContext judgeContext) {
+        String language = judgeContext.getLanguage();
         JudgeStrategy judgeStrategy = new DefaultJudgeStrategy();
         if (language.equals("java")) {
             judgeStrategy = new JavaJudgeStrategy();

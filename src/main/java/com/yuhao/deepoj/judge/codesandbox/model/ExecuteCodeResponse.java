@@ -13,23 +13,33 @@ import java.util.List;
 @AllArgsConstructor
 public class ExecuteCodeResponse {
     /**
+     * 提交 ID
+     */
+    private Long submissionId;
+
+    /**
      * 用户输出
      */
     private List<String> outputList;
 
     /**
-     * 接口信息
+     * 运行信息（错误/正常）
      */
-    private String message;
+    private List<String> messageList;
+
+    /**
+     * 运行时间
+     */
+    private List<Long> runTimeList;
+
+    /**
+     * 运行内存
+     */
+    private List<Long> runMemoryList;
 
     /**
      * 执行状态
      */
     private String status;
-
-    /**
-     * 判题信息
-     */
-    private JudgeInfo judgeInfo;
 }
 

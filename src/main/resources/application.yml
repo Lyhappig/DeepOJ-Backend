@@ -14,7 +14,7 @@ spring:
   # session 配置
   session:
     # todo 取消注释开启分布式 session（须先配置 Redis）
-    # store-type: redis
+    store-type: redis
     # 30 天过期
     timeout: 2592000
   # 数据库配置
@@ -26,12 +26,12 @@ spring:
     password: 123456
   # Redis 配置
   # todo 需替换配置，然后取消注释
-  #  redis:
-  #    database: 1
-  #    host: localhost
-  #    port: 6379
-  #    timeout: 5000
-  #    password: 123456
+  redis:
+    database: 1
+    host: localhost
+    port: 6379
+    timeout: 5000
+    password: 123456
   # Elasticsearch 配置
   # todo 需替换配置，然后取消注释
   #  elasticsearch:
@@ -43,8 +43,21 @@ spring:
     multipart:
       # 大小限制
       max-file-size: 10MB
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      direct:
+        prefetch: 100
+    template:
+      mandatory: true
+
 server:
-  address: 0.0.0.0
+  address: 127.0.0.1
   port: 8121
   servlet:
     context-path: /api
@@ -103,4 +116,4 @@ knife4j:
           - com.yuhao.deepoj.controller
 # 代码沙箱配置
 codesandbox:
-  type: example
+  type: remote

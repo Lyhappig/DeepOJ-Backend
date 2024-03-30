@@ -269,5 +269,4 @@ public class ProblemController {
         boolean result = problemService.updateById(problem);
         return ResultUtils.success(result);
     }
-
 }

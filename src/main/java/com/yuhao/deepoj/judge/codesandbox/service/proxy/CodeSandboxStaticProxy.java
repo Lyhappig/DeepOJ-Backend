@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CodeSandboxStaticProxy implements CodeSandbox {
     private final CodeSandbox codeSandboxImpl;
 
-
     public CodeSandboxStaticProxy(CodeSandbox codeSandboxImpl) {
         this.codeSandboxImpl = codeSandboxImpl;
     }

@@ -1,9 +1,8 @@
 package com.yuhao.deepoj.judge.strategy;
 
+import com.yuhao.deepoj.judge.codesandbox.model.ExecuteCodeResponse;
 import com.yuhao.deepoj.model.dto.problem.JudgeCase;
-import com.yuhao.deepoj.judge.codesandbox.model.JudgeInfo;
-import com.yuhao.deepoj.model.entity.Problem;
-import com.yuhao.deepoj.model.entity.Submission;
+import com.yuhao.deepoj.model.dto.problem.JudgeConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,16 +19,12 @@ import java.util.List;
 @AllArgsConstructor
 public class JudgeContext {
 
-    private JudgeInfo judgeInfo;
-
-    private List<String> inputList;
-
-    private List<String> outputList;
+    private ExecuteCodeResponse executeCodeResponse;
 
     private List<JudgeCase> judgeCaseList;
 
-    private Problem problem;
+    private JudgeConfig judgeConfig;
 
-    private Submission submission;
+    private String language;
 }
 

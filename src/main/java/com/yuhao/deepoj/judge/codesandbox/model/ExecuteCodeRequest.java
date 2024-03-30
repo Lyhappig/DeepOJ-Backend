@@ -13,6 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ExecuteCodeRequest {
     /**
+     * 提交 ID
+     */
+    private Long submissionId;
+
+    /**
      * 题目输入
      */
     private List<String> inputList;
@@ -26,5 +31,20 @@ public class ExecuteCodeRequest {
      * 判题语言
      */
     private String language;
+
+    /**
+     * 时间限制(ms)
+     */
+    private Long timeLimit;
+
+    /**
+     * 内存限制(MB)
+     */
+    private Long memoryLimit;
+
+    /**
+     * 堆栈限制(MB)
+     */
+    private Long stackLimit;
 }
 
